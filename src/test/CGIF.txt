@@ -1,0 +1,92 @@
+[Block: Tes.java]
+(Contains	InConcept: Block: Tes.java	OutConcept: Class: Tes)
+[Class: Tes]
+(Contains	InConcept: Class: Tes	OutConcept: Method: BinarySearch)
+[Method: BinarySearch	Modifiers: [public, static]	ReturnType: int	ParameterList: [int[] a, int key]]
+(Parameter	InConcept: Method: BinarySearch	OutConcept: Variable: a)
+(Parameter	InConcept: Method: BinarySearch	OutConcept: Variable: key)
+(Contains	InConcept: Method: BinarySearch	OutConcept: Block: Method: BinarySearch)
+(Returns	InConcept: Method: BinarySearch	OutConcept: MathOp: -)
+[Variable: a	Type: int[]	Scope: Method: BinarySearch]
+[Variable: key	Type: int	Scope: Method: BinarySearch]
+[Block: Method: BinarySearch]
+[MathOp: -	LeftSide: low	RightSide: 1]
+(Contains	InConcept: Block: Method: BinarySearch	OutConcept: Assign:*)
+(Contains	InConcept: Block: Method: BinarySearch	OutConcept: Assign:*)
+(Contains	InConcept: Block: Method: BinarySearch	OutConcept: Loop: While)
+(Contains	InConcept: MathOp: -	OutConcept: Variable: low)
+(Contains	InConcept: MathOp: -	OutConcept: String: 1)
+[Assign:*	LeftSide: low	RightSide: 0]
+[Assign:*	LeftSide: high	RightSide: a.length - 1]
+[Loop: While	Type : null	Condition : low <= high]
+[Variable: low	Type: int	Scope: Method: BinarySearch]
+[String: 1]
+(Contains	InConcept: Assign:*	OutConcept: String: 0)
+(Contains	InConcept: Assign:*	OutConcept: Variable: low)
+(Contains	InConcept: Assign:*	OutConcept: MathOp: -)
+(Contains	InConcept: Assign:*	OutConcept: Variable: high)
+(Condition	InConcept : Loop: 	OutConcept : CompareOp: <=)
+(Contains	InConcept: Loop: 	OutConcept: Block: Loop: While	Type: null	Condition: low <= high)
+[String: 0]
+[MathOp: -	LeftSide: a.length	RightSide: 1]
+[Variable: high	Type: int	Scope: Method: BinarySearch]
+[CompareOp: <=	LeftSide: low	RightSide: high]
+[Block: Loop: While	Type: null	Condition: low <= high]
+(Contains	InConcept: MathOp: -	OutConcept: String: 1)
+(Contains	InConcept: CompareOp: <=	OutConcept: Variable: low)
+(Contains	InConcept: CompareOp: <=	OutConcept: Variable: high)
+(Contains	InConcept: Block: Loop: While	Type: null	Condition: low <= high	OutConcept: Assign:*)
+(Contains	InConcept: Block: Loop: While	Type: null	Condition: low <= high	OutConcept: Assign:*)
+(Contains	InConcept: Block: Loop: While	Type: null	Condition: low <= high	OutConcept: If: midVal < key)
+[String: 1]
+[Assign:*	LeftSide: mid	RightSide: low + (high - low) / 2]
+[Assign:*	LeftSide: midVal	RightSide: a[mid]]
+[If: midVal < key]
+(Contains	InConcept: Assign:*	OutConcept: MathOp: +)
+(Contains	InConcept: Assign:*	OutConcept: Variable: mid)
+(Contains	InConcept: Assign:*	OutConcept: Variable: midVal)
+(Condition	InConcept : If: midVal < key	OutConcept : CompareOp: <)
+(Contains	InConcept: If: midVal < key	OutConcept: Block: If: midVal < key)
+(Contains	InConcept: If: midVal < key	OutConcept: If: key < midVal)
+[MathOp: +	LeftSide: low	RightSide: (high - low) / 2]
+[Variable: mid	Type: int	Scope: Loop: While	Type: null	Condition: low <= high]
+[Variable: midVal	Type: int	Scope: Loop: While	Type: null	Condition: low <= high]
+[CompareOp: <	LeftSide: midVal	RightSide: key]
+[Block: If: midVal < key]
+[If: key < midVal]
+(Contains	InConcept: MathOp: +	OutConcept: Variable: low)
+(Contains	InConcept: MathOp: +	OutConcept: MathOp: /)
+(Contains	InConcept: CompareOp: <	OutConcept: Variable: midVal)
+(Contains	InConcept: CompareOp: <	OutConcept: Variable: key)
+(Contains	InConcept: Block: If: midVal < key	OutConcept: MathOp: =)
+(Condition	InConcept : If: key < midVal	OutConcept : CompareOp: <)
+(Contains	InConcept: If: key < midVal	OutConcept: Block: If: key < midVal)
+(Contains	InConcept: If: key < midVal	OutConcept: Block: Else: If: key < midVal)
+[MathOp: /	LeftSide: high - low	RightSide: 2]
+[MathOp: =	LeftSide: low	RightSide: mid + 1]
+[CompareOp: <	LeftSide: key	RightSide: midVal]
+[Block: If: key < midVal]
+[Block: Else: If: key < midVal]
+(Contains	InConcept: MathOp: /	OutConcept: MathOp: -)
+(Contains	InConcept: MathOp: /	OutConcept: String: 2)
+(Contains	InConcept: MathOp: =	OutConcept: Variable: low)
+(Contains	InConcept: MathOp: =	OutConcept: MathOp: +)
+(Contains	InConcept: CompareOp: <	OutConcept: Variable: key)
+(Contains	InConcept: CompareOp: <	OutConcept: Variable: midVal)
+(Contains	InConcept: Block: If: key < midVal	OutConcept: MathOp: =)
+(Returns	InConcept: Block: Else: If: key < midVal	OutConcept: Variable: mid)
+[MathOp: -	LeftSide: high	RightSide: low]
+[String: 2]
+[MathOp: +	LeftSide: mid	RightSide: 1]
+[MathOp: =	LeftSide: high	RightSide: mid - 1]
+(Contains	InConcept: MathOp: -	OutConcept: Variable: high)
+(Contains	InConcept: MathOp: -	OutConcept: Variable: low)
+(Contains	InConcept: MathOp: +	OutConcept: Variable: mid)
+(Contains	InConcept: MathOp: +	OutConcept: String: 1)
+(Contains	InConcept: MathOp: =	OutConcept: Variable: high)
+(Contains	InConcept: MathOp: =	OutConcept: MathOp: -)
+[String: 1]
+[MathOp: -	LeftSide: mid	RightSide: 1]
+(Contains	InConcept: MathOp: -	OutConcept: Variable: mid)
+(Contains	InConcept: MathOp: -	OutConcept: String: 1)
+[String: 1]
