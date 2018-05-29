@@ -142,32 +142,6 @@ public class Neo4jImplementation {
     	
 	}
 	
-	 public static List<Object> union(List<Object> cols, List<Object> cols2) {
-	        final ArrayList result = new ArrayList(cols);
-	        result.addAll(cols2);
-	        return result;
-	    }
-  
-
-
-	private static List<Object> readFile(String fileName) throws IOException
-    {
-       List<Object> values = new ArrayList<Object>();
-       BufferedReader br = new BufferedReader(new  FileReader(fileName));
-       
-	   String line = null;
-	   int i = 0;
-	   while ((line = br.readLine()) != null) {
-	    	values.add(line);
-			System.out.println("linesep==="+line);
-	        i++;
-	    }
-       
-	    br.close();
-	    return values;
-    }
-
-
 	public static void ToNeo4j(String MethodName, Object object) {
     	 // Create Nodes.
         String Relations[] = { "Condition", "Contains", "Parameter", "Returns", "Depends", "Defines" };
@@ -225,6 +199,7 @@ public class Neo4jImplementation {
 	public void ToCSV(String MethodName, Object object2, int methodID, StringBuilder sb, StringBuilder sbr, BufferedWriter bw, BufferedWriter bwr, BufferedWriter bwnr, StringBuilder sbnr) {
         String Relations[] = { "Condition", "Contains", "Parameter", "Returns", "Depends", "Defines" };
         int NodeID = 0;
+
 		/*for(GraphConcept node : ((AbstractBaseGraph<GraphConcept, GraphEdge>) object2).vertexSet()){
             //Type, Name, MethodName, MethodID/GraphID, NodeID
 			//NodeID++;
@@ -326,10 +301,11 @@ public class Neo4jImplementation {
            IntNodeId++;
            sbnr.append(writestr);        
            sbnr.append('\n');
+           
 		}	
     	for(GraphEdge edge : ((AbstractBaseGraph<GraphConcept, GraphEdge>) object2).edgeSet()) {
-    		System.out.println("graphId= "+methodID+"Source Id=  "+edge.getSource().nodeRank+" Traget id= "+edge.getTarget().nodeRank );
-    		System.out.println("graphId= "+methodID+"Source Id=  "+edge.getSource().getName()+" Traget id= "+edge.getTarget().getName() );
+    		System.out.println("Source =  "+edge.getSource()+" Traget = "+edge.getTarget());
+    	//	System.out.println("graphId= "+methodID+"Source Id=  "+edge.getSource().getName()+" Traget id= "+edge.getTarget().getName() );
     		/*sbnr.append(",");
     		sbnr.append(methodID);
     		sbnr.append(",");

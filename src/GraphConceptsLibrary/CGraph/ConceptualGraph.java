@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
@@ -106,7 +107,11 @@ public class ConceptualGraph extends
 		GraphConcept gc = null;
 		
 		Set<GraphConcept> set = vertexSet();
+		System.out.println("set=="+set);
+
 		for(GraphConcept gg : set){
+			System.out.println("g=="+gg.toString());
+
 			if(gg.toString().startsWith("Variable")){
 				String n1 = ((Variable) g).getName();
 				String t1 = ((Variable) g).getType();
@@ -121,22 +126,31 @@ public class ConceptualGraph extends
 				}
 			}
 		}
-		
+		System.out.println("gc=="+gc);
 		return gc;
 	}
 	
 	public void addVerticesAndEdge(GraphConcept g1, GraphConcept g2) {
-		GraphConcept t = null;
+		
+		//System.out.println("graph concept1== "+g1);
+		//System.out.println("graph concept2== "+g2.toString());
+
+		/*GraphConcept t = null;
 		if(g2.toString().startsWith("Variable")){
+			System.out.println("graph concept2== "+g2.toString());
 			t = checkExist(g2);
+			System.out.println("t== "+t);
 		}
-		
-		if(t != null)
+		if(t != null) {
 			g2 = t;
+		}*/
+        if (g1 != null && g2 != null) {
+        	addVertex(g1);
+    		addVertex(g2);
+    		GraphEdge e = addEdge(g1, g2);
+        }
+
 		
-		addVertex(g1);
-		addVertex(g2);
-		GraphEdge e = addEdge(g1, g2);
 	}
 
 	public GraphEdge addEdge(GraphConcept g1, GraphConcept g2) {
@@ -229,6 +243,7 @@ public class ConceptualGraph extends
 	 * @return an array of Objects that represents the declaration in the class.
 	 */
 	public Object[] getBodyDeclarations(ASTNode root) {
+		try {
 			Object[] kids = traversal.getChildren(root);
 			TypeDeclaration typeDec = null;
 			for (int i = 0; i < kids.length; i++) {
@@ -267,9 +282,14 @@ public class ConceptualGraph extends
 				return decs;
 			
 			}else {
-				throw new NullPointerException("Class structure not found in java file");
+				System.out.println(root.getRoot());
+				throw new NullPointerException("Class structure not found in java file"+root);
 			}
-	   
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
 	}
 
 	/**
@@ -452,17 +472,14 @@ public class ConceptualGraph extends
 	 * @return a Method of GraphConcept
 	 */
 	private Method createMethodFromMethodDeclaration(MethodDeclaration node) {
-
 		Method method = null;
 		// if it is a method and not constructor
 		if (!node.isConstructor()) {
 			method = new Method(node.getName().toString(), node.toString());
 			method.setReturnType(node.getReturnType2().toString());
-
 			String t = node.modifiers().toString();
 			t = t.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(",", "");
-			method.setModifiers(t);
-			
+			method.setModifiers(t);			
 			t = node.parameters().toString();
 			t = "(" + t.substring(1, t.length()-1) + ")";
 			method.setParameterList(t);
@@ -504,7 +521,7 @@ public class ConceptualGraph extends
 				this.addVerticesAndEdge(containsMethod, methodBlock);
 				this.addVerticesAndEdge(method, containsMethod);
 			}
-
+			try {
 			// get the return value
 			if (!node.getReturnType2().equals("void")) {
 				ReturnStatement rs = null;
@@ -513,15 +530,23 @@ public class ConceptualGraph extends
 					if (s instanceof ReturnStatement)
 						rs = (ReturnStatement) s;
 				}
+				//System.out.println(rs);
 
 				if (rs != null) {
 					GraphConcept value = createConceptFromExpressionSyntax(
 							rs.getExpression(), method.getName());
+				//	if(value!=null) {
 					Returns ret = new Returns(method.getName(), value.toString());
 					this.addVerticesAndEdge(ret, value);
 					this.addVerticesAndEdge(method, ret);
+					//}
 				}
 			}
+			}
+			catch (Exception ex)
+            {
+                methodBlock = null;
+            }
 		} else {
 			// if it is a constructor declaration
 			method = new Method(node.getName().toString(), node.toString());
@@ -574,7 +599,6 @@ public class ConceptualGraph extends
 	 */
 	private GraphConcept createConceptFromExpressionSyntax(Expression exp,
 			String currentScope) {	
-		
 		if (exp instanceof BooleanLiteral) {
 			StringDef lit = new StringDef(((BooleanLiteral) exp).toString(),
 					Boolean.toString(((BooleanLiteral) exp).booleanValue()));
@@ -632,8 +656,11 @@ public class ConceptualGraph extends
 
 			return mathop;
 		} else if (exp instanceof SimpleName) {
+
 			GraphConcept concept = searchIdentifierInScope(exp, currentScope);
+
 			return concept;
+
 		}
 
 		return new GraphConcept();
@@ -664,37 +691,121 @@ public class ConceptualGraph extends
 							.getName())
 							&& scp.equals(((Variable) temp).getScope())) {
 						var = (Variable) temp;
+
 						break outerloop;
 					}
+					
 				}
+				
 			}
 		}
-		
 		// find the identifier for this expression in the current scope
-		if (var != null)
-			return var;
-		else {
+		if (var != null) {
+			return var;}
+	//	else {
 			// find the identifier in the field level
 			it = graphSet.iterator();
 			while (it.hasNext()) {
 				GraphConcept temp = it.next();
 				if (temp instanceof Field) {
+
 					if (("Field: " + id.toString()).equals(((Field) temp)
 							.getName())
 							&& currentScope.equals(((Field) temp).getScope())) {
 						field = (Field) temp;
+
 						break;
 					}
+					
 				}
 			}
 
 			if (field != null)
 				return field;
-		}
+	//	}
 
 		// if no identifier found
 		return null;
-	}
+	} 
+	/*private GraphConcept searchIdentifierInScope(Expression id,
+			String currentScope) {
+		Variable var = null;
+		Field field = null;		
+		Set<GraphConcept> graphSet = this.vertexSet();
+		Iterator<GraphConcept> it;		
+		Iterator<String> scIt = scopeSet.iterator();
+		outerloop:
+		while(scIt.hasNext()){
+			String scp = scIt.next();
+			it = graphSet.iterator();
+			while (it.hasNext()) {
+				GraphConcept temp = it.next();
+				System.out.println("temp=="+temp);
+				if (temp instanceof Variable) {
+					System.out.println("var in lopp==");
+					System.out.println("temp var tostring =="+"Variable: "+id.toString());
+					System.out.println("temp var=="+((Variable) temp).getName());
+					System.out.println("temp currentScope tostring =="+scp);
+					System.out.println("temp currentScope=="+((Variable) temp).getScope());
+					if (("Variable: " + id.toString()).equals(((Variable) temp)
+							.getName())
+							&& scp.equals(((Variable) temp).getScope())) {
+						var = (Variable) temp;
+
+						break ;
+					}
+					if (scp.equals(((Variable) temp).getScope())) {
+						var = (Variable) temp;
+
+						break ;
+					}
+				}
+				
+			}
+		}
+		System.out.println("var=="+var);
+		// find the identifier for this expression in the current scope
+		if (var != null) {
+			return var;}
+	//	else {
+			// find the identifier in the field level
+			it = graphSet.iterator();
+			while (it.hasNext()) {
+				GraphConcept temp = it.next();
+				if (temp instanceof Field) {
+					System.out.println("temp Field tostring =="+"Field: "+id.toString());
+					System.out.println("temp Field=="+((Field) temp).getName());
+					System.out.println("temp currentScope tostring =="+currentScope);
+					System.out.println("temp currentScope=="+((Field) temp).getScope());
+
+
+					if (("Field: " + id.toString()).equals(((Field) temp)
+							.getName())
+							&& currentScope.equals(((Field) temp).getScope())) {
+						field = (Field) temp;
+						System.out.println("field in loop=="+field);
+
+						break;
+					}
+					if (("Field: " + id.toString()).equals(((Field) temp)
+							.getName())
+							) {
+						field = (Field) temp;
+						System.out.println("field in loop=="+field);
+
+						break;
+					}
+				}
+			}
+			System.out.println("field=="+field);
+
+			if (field != null)
+				return field;
+	//	}
+
+		// if no identifier found
+		return null;
+	}*/
 	
 	/**
 	 * Method to create a MethodCall GraphConcept from a method invocation
@@ -1101,7 +1212,8 @@ public class ConceptualGraph extends
 	 * @param scope - the String representing the scope
 	 * @return a BlockSyntax of GraphConcept
 	 */
-	private BlockSyntax createBlockFromBlockSyntax(Block block, String scope) {				
+	private BlockSyntax createBlockFromBlockSyntax(Block block, String scope) {
+		try {
 		BlockSyntax methodBlock = new BlockSyntax(scope, "");
 		List<Statement> childStatement = block.statements();
 		for (Statement s : childStatement) {
@@ -1235,6 +1347,11 @@ public class ConceptualGraph extends
 			}
 		}
 		return methodBlock;
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
 	}
 
 	/**
@@ -1616,9 +1733,9 @@ public class ConceptualGraph extends
 	 * @param currentScope - the String representing the scope
 	 * @return a GraphObject for If declaration
 	 */
-	private GraphConcept createConceptFromIfExpression(
-			IfStatement ifExpression, String currentScope) {
-		
+	private GraphConcept createConceptFromIfExpression(IfStatement ifExpression, String currentScope) 
+	{
+		try {
 		If ifExp = new If(ifExpression.getExpression().toString());
 		CompareOp compare = createCompareOpFromBinaryExpression(
 				ifExpression.getExpression(), currentScope);
@@ -1704,8 +1821,13 @@ public class ConceptualGraph extends
 				}
 			}
 		}
-
 		return ifExp;
+
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
 	}
 
 	/**
