@@ -21,6 +21,7 @@ import GraphConceptsLibrary.CGraph.GraphEdge;
 public class SubjectVerbObject {
 	static HashMap<String, ConceptualGraph> Graph = new HashMap<String, ConceptualGraph>();
 	String SvoDataCsv = "E:\\PoonamAris\\ArisJava\\bin\\svo_data.csv";
+	
 	private void ConvertAll(String directory) throws IOException {
         String methodName="";
 		File[] files = new File(directory).listFiles();
