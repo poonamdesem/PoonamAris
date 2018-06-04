@@ -476,6 +476,7 @@ public class ConceptualGraph extends
 		// if it is a method and not constructor
 		if (!node.isConstructor()) {
 			method = new Method(node.getName().toString(), node.toString());
+			//System.out.println(method);
 			method.setReturnType(node.getReturnType2().toString());
 			String t = node.modifiers().toString();
 			t = t.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(",", "");

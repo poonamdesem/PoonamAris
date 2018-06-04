@@ -170,7 +170,14 @@ public class SubjectVerbObject {
    	 	int dot1 = className.lastIndexOf(".");
 
 		for (File file : files) {
-			 if (file.isFile() && file.getName().startsWith(className.substring(0,dot1)) ) {
+			int uscore = file.getName().indexOf("_");
+        	  String struscore =file.getName().substring(0,uscore);
+        	  int fname1= struscore.lastIndexOf(".");	 
+			// if (file.isFile() && file.getName().startsWith(className.substring(0,dot1)) ) {
+			if (file.isFile() && struscore.trim().equals(className.substring(0,dot1)) ) {
+				 
+			    	System.out.println("file name:  "+file.getName() +" "+struscore.trim()+ "  start with: "+className.substring(0,dot1));
+			    	
 			    	System.out.println("working for "+className);
 			  	  String[] methodNameArr1 =null;
 
@@ -269,7 +276,7 @@ public class SubjectVerbObject {
 			//workingcorpus
 			//JavaCorpus
 			//java_corpus
-			svo.ConvertAll("E:\\PoonamAris\\ArisJava\\bin\\workingcorpus");
+			svo.ConvertAll("E:\\PoonamAris\\ArisJava\\bin\\JavaCorpus");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
